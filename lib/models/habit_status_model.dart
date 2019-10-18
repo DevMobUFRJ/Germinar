@@ -1,5 +1,5 @@
 /// Salva qual hábito foi feito em qual dia pra manter histórico de hábitos
-class HabitStatus {
+class HabitDay {
   static const String TABLE_NAME = "habit_status";
 
   /// Chave primária: (habit_id, day)
@@ -10,9 +10,9 @@ class HabitStatus {
   /// Se o hábito foi feito ou não no dia previsto
   bool done;
 
-  HabitStatus(this.habitId, this.day, {this.done = false});
+  HabitDay(this.habitId, this.day, {this.done = false});
 
-  HabitStatus.fromMap(Map<String, dynamic> map) {
+  HabitDay.fromMap(Map<String, dynamic> map) {
     habitId = map['habit_id'];
     day = DateTime.parse(map['day']);
     done = map['done'] == 1;
