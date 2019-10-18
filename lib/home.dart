@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:germinar/habitSettings.dart';
 import 'package:germinar/my_flutter_app_icons.dart';
 
 class Home extends StatefulWidget {
@@ -88,7 +89,8 @@ class _HomeState extends State<Home> {
         ),
       ),
       onTap: () {
-        //TODO: passar para a tela de configuração do habito
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => HabitSettings()));
       },
     );
   }
