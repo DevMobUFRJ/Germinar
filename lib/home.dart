@@ -1,10 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:germinar/habit_details.dart';
 import 'package:germinar/my_flutter_app_icons.dart';
-
-import 'models/habit_model.dart';
-import 'models/habit_status_model.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -92,13 +88,7 @@ class _HomeState extends State<Home> {
         ),
       ),
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => HabitDetails(
-                  //TODO pegar o Habit certo
-                  habit: Habit(1, "Habito aleatorio",
-                      "Uma descricao u mpouco maior mesmo.", 1),
-                  habitDay: HabitDay(1, DateTime.now(), done: false),
-                )));
+        //TODO: passar para a tela de configuração do habito
       },
     );
   }

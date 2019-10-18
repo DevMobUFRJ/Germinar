@@ -16,7 +16,7 @@ class MainScopedModel extends Model {
   /// Hábitos que o usuário já configurou e fez ou tem pra fazer
   /// Inclui passados e futuros. Para pegar apenas histórico ou próximos,
   /// use os métodos adequados.
-  List<HabitDay> userHabits = [];
+  List<HabitStatus> userHabits = [];
   List<HabitConfig> userHabitsConfig = [];
 
   MainScopedModel() {
@@ -83,9 +83,10 @@ class MainScopedModel extends Model {
 
   Future<void> updateUserHabits() async {
     final Database db = await _database;
-    final List<Map<String, dynamic>> maps = await db.query(HabitDay.TABLE_NAME);
+    final List<Map<String, dynamic>> maps =
+        await db.query(HabitStatus.TABLE_NAME);
     userHabits = List.generate(maps.length, (i) {
-      return HabitDay.fromMap(maps[i]);
+      return HabitStatus.fromMap(maps[i]);
     });
     notifyListeners();
   }
@@ -103,13 +104,13 @@ class MainScopedModel extends Model {
   /// Remove hábitos concluídos há muito tempo
   Future<void> cleanOldHabits() async {
     final Database db = await _database;
-    List<HabitDay> oldHabits = userHabits
+    List<HabitStatus> oldHabits = userHabits
         .where((h) => h.day.isBefore(DateTime(
                 DateTime.now().year, DateTime.now().month, DateTime.now().day)
             .subtract(Duration(days: 30))))
         .toList();
-    for (HabitDay h in oldHabits) {
-      await db.delete(HabitDay.TABLE_NAME,
+    for (HabitStatus h in oldHabits) {
+      await db.delete(HabitStatus.TABLE_NAME,
           where: "habit_id=? and day=?",
           whereArgs: [h.habitId, h.day.toIso8601String()]);
     }
@@ -129,19 +130,20 @@ class MainScopedModel extends Model {
       dayCheck = dayCheck.add(Duration(days: 1));
       for (HabitConfig habitDay in habitsDays) {
         if (habitDay.hasDay(dayCheck.weekday)) {
-          List<Map<String, dynamic>> map = await db.query(HabitDay.TABLE_NAME,
+          List<Map<String, dynamic>> map = await db.query(
+              HabitStatus.TABLE_NAME,
               where: "habit_id=? AND day=?",
               whereArgs: [habitDay.habitId, dayCheck.toIso8601String()]);
           if (map.length == 0) {
             await db.execute(
-                "INSERT INTO ${HabitDay.TABLE_NAME} VALUES (${habitDay.habitId}, '${dayCheck.toIso8601String()}', 0)");
+                "INSERT INTO ${HabitStatus.TABLE_NAME} VALUES (${habitDay.habitId}, '${dayCheck.toIso8601String()}', 0)");
           }
         }
       }
     }
   }
 
-  List<HabitDay> nextHabits() {
+  List<HabitStatus> nextHabits() {
     return userHabits
         .where((h) => h.day.isAfter(DateTime(
                 DateTime.now().year, DateTime.now().month, DateTime.now().day)
@@ -149,7 +151,7 @@ class MainScopedModel extends Model {
         .toList(); // 23:59:59 do dia anterior
   }
 
-  List<HabitDay> previousHabits() {
+  List<HabitStatus> previousHabits() {
     return userHabits.where((h) => h.day.isBefore(DateTime.now())).toList();
   }
 
@@ -168,7 +170,6 @@ class MainScopedModel extends Model {
     userHabitsConfig.add(habitDays);
     await setupFutureHabits();
     await updateUserHabits();
-    return true;
   }
 
   void deleteHabitConfig(HabitConfig habit) async {
@@ -182,27 +183,23 @@ class MainScopedModel extends Model {
 
   void _deleteFutureHabits(HabitConfig habit) async {
     final Database db = await _database;
-    for (HabitDay hs in nextHabits()) {
+    for (HabitStatus hs in nextHabits()) {
       if (hs.habitId == habit.habitId) {
-        db.delete(HabitDay.TABLE_NAME,
+        db.delete(HabitStatus.TABLE_NAME,
             where: "habit_id=? and day=?",
             whereArgs: [hs.habitId, hs.day.toIso8601String()]);
       }
     }
   }
 
-  Future<void> updateHabitDayStatus(HabitDay habit, bool done) async {
+  Future<void> updateHabitStatus(HabitStatus habit, bool done) async {
     habit.done = done;
     final Database db = await _database;
     await db.execute(
-        "UPDATE ${HabitDay.TABLE_NAME} SET done=${done ? '1' : '0'} WHERE habit_id=${habit.habitId} and day='${habit.day.toIso8601String()}';");
+        "UPDATE ${HabitStatus.TABLE_NAME} SET done=${done ? '1' : '0'} WHERE habit_id=${habit.habitId} and day='${habit.day.toIso8601String()}';");
     userHabits
         .removeWhere((h) => h.habitId == habit.habitId && h.day == habit.day);
     userHabits.add(habit);
     notifyListeners();
-  }
-
-  Habit getHabitForId(int id) {
-    return habits.firstWhere((h) => h.id == id, orElse: () => null);
   }
 }
