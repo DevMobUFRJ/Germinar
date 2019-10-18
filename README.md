@@ -1,16 +1,12 @@
 # Germinar
 
-Crie Hábitos Sustentáveis e Saudáveis
+Desenvolva hábitos sustentáveis.
 
-## Getting Started
+## Sobre o projeto
+O app permite que usuários escolham, a partir de uma lista, hábitos sustentáveis dividos entre categorias
+como Consumo, Reciclagem, Ar e Água.
 
-This project is a starting point for a Flutter application.
+O Projeto foi idealizado e teve seu design feito por Letícia Ribeiro (integrante do DevMob) e Giovanna Moraes.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+O app foi desenvolvido por George Rappel e Patrick Sasso para apresentação durante a SNCT - 
+Semana Nacional de Ciência e Tecnologia, com autorização das autoras.
