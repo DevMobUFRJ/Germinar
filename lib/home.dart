@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:germinar/habitSettings.dart';
+import 'package:germinar/habit_settings.dart';
 import 'package:germinar/my_flutter_app_icons.dart';
-import 'package:germinar/scoped_models/MainScopedModel.dart';
+import 'package:germinar/scoped_models/main_scoped_model.dart';
 import 'package:germinar/utils.dart';
 import 'package:scoped_model/scoped_model.dart';
 

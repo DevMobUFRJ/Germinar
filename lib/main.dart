@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:germinar/scoped_models/MainScopedModel.dart';
+import 'package:germinar/scoped_models/main_scoped_model.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import 'home.dart';
