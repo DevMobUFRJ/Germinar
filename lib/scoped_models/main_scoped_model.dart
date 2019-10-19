@@ -192,6 +192,10 @@ class MainScopedModel extends Model {
     return habits.firstWhere((h) => h.id == habitId, orElse: () => null);
   }
 
+  List<Habit> getHabitForCategoryId(int categoryId) {
+    return habits.where((h) => h.categoryId == categoryId).toList();
+  }
+
   Future<bool> addHabitConfig(HabitConfig habitDays) async {
     if (userHasHabit(habitDays.habitId)) return false;
 

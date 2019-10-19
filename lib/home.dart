@@ -2,11 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:germinar/habit_settings.dart';
+import 'package:germinar/main.dart';
 import 'package:germinar/my_flutter_app_icons.dart';
 import 'package:germinar/scoped_models/main_scoped_model.dart';
 import 'package:germinar/utils.dart';
 import 'package:scoped_model/scoped_model.dart';
 
+import 'habit_category.dart';
 import 'models/habit_day_model.dart';
 import 'models/habit_model.dart';
 
@@ -17,9 +19,17 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool tabState = true;
+  int _bottomNavigationSelected = 0;
+
+  _onBottomNavigationTapped(int index) {
+    setState(() {
+      _bottomNavigationSelected = index;
+    });
+  }
 
   Widget cardUm() {
     return Card(
+      elevation: 5,
       child: Column(
         children: <Widget>[
           Container(
@@ -180,6 +190,7 @@ class _HomeState extends State<Home> {
 
   Widget cardList() {
     return Card(
+      elevation: 5,
       child: ScopedModelDescendant<MainScopedModel>(
         child: tabs(),
         builder: (context, child, mainModel) {
@@ -194,6 +205,106 @@ class _HomeState extends State<Home> {
                 .toList()),
           );
         },
+      ),
+    );
+  }
+
+  Widget metasTab() {
+    return SingleChildScrollView(
+      physics: ScrollPhysics(parent: BouncingScrollPhysics()),
+      child: Container(
+        child: Column(
+          children: <Widget>[
+            AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              centerTitle: true,
+              title: Text(
+                'METAS',
+                style: TextStyle(fontWeight: FontWeight.normal),
+              ),
+            ),
+            SizedBox(height: 20),
+            Card(
+              elevation: 5,
+              child: Container(
+                padding: EdgeInsets.all(18),
+                child: ScopedModelDescendant<MainScopedModel>(
+                  builder: (context, child, mainModel) {
+                    return Column(
+                      children: List<Widget>.generate(
+                        mainModel.categories.length,
+                        (i) {
+                          return GestureDetector(
+                            child: Card(
+                              elevation: 3,
+                              color: Color(0xffC5E2D0),
+                              child: Padding(
+                                padding: const EdgeInsets.all(18.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      mainModel.categories[i].title,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HabitCategory(
+                                    categoryId: mainModel.categories[i].id,
+                                    categoryName: mainModel.categories[i].title,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget homeTab() {
+    return SingleChildScrollView(
+      physics: ScrollPhysics(parent: BouncingScrollPhysics()),
+      child: Container(
+        child: Column(
+          children: <Widget>[
+            AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              centerTitle: true,
+              title: Text(
+                'HOME',
+                style: TextStyle(fontWeight: FontWeight.normal),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            cardUm(),
+            SizedBox(
+              height: 20,
+            ),
+            cardList()
+          ],
+        ),
       ),
     );
   }
@@ -215,46 +326,23 @@ class _HomeState extends State<Home> {
             ],
           ),
         ),
-        child: SingleChildScrollView(
-          physics: ScrollPhysics(parent: BouncingScrollPhysics()),
-          child: Container(
-            child: Column(
-              children: <Widget>[
-                AppBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  centerTitle: true,
-                  title: Text(
-                    'HOME',
-                    style: TextStyle(fontWeight: FontWeight.normal),
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                cardUm(),
-                SizedBox(
-                  height: 20,
-                ),
-                cardList()
-              ],
-            ),
-          ),
-        ),
+        child: _bottomNavigationSelected == 0 ? homeTab() : metasTab(),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Color(0xff389C84),
+        onTap: _onBottomNavigationTapped,
+        currentIndex: _bottomNavigationSelected,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-              icon: Icon(MyIcons.home),
-              title: Text(
-                "Home",
-                style: TextStyle(color: Color(0xff389C84)),
-              ),
-              activeIcon: Icon(MyIcons.home, color: Color(0xff389C84))
-              //Color(0xff389C84)
-              ),
+            icon: Icon(MyIcons.home),
+            title: Text(
+              "Home",
+            ),
+          ),
           BottomNavigationBarItem(
-              icon: Icon(MyIcons.metas), title: Text("Metas")),
+            icon: Icon(MyIcons.metas),
+            title: Text("Metas"),
+          ),
         ],
       ),
     );
