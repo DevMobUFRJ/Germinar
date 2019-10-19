@@ -141,7 +141,14 @@ class MainScopedModel extends Model {
     }
   }
 
-  List<HabitDay> nextHabits() {
+  List<HabitDay> get todaysHabits {
+    return userHabits
+        .where((h) => h.day.isAtSameMomentAs(DateTime(
+            DateTime.now().year, DateTime.now().month, DateTime.now().day)))
+        .toList();
+  }
+
+  List<HabitDay> get nextHabits {
     return userHabits
         .where((h) => h.day.isAfter(DateTime(
                 DateTime.now().year, DateTime.now().month, DateTime.now().day)
@@ -153,15 +160,19 @@ class MainScopedModel extends Model {
     return userHabits.where((h) => h.day.isBefore(DateTime.now())).toList();
   }
 
-  bool hasHabit(int habitId) {
+  bool userHasHabit(int habitId) {
     for (HabitConfig hs in userHabitsConfig) {
       if (hs.habitId == habitId) return true;
     }
     return false;
   }
 
+  Habit getHabitForId(int habitId) {
+    return habits.firstWhere((h) => h.id == habitId, orElse: () => null);
+  }
+
   Future<bool> addHabitConfig(HabitConfig habitDays) async {
-    if (hasHabit(habitDays.habitId)) return false;
+    if (userHasHabit(habitDays.habitId)) return false;
 
     final Database db = await _database;
     await db.insert(HabitConfig.TABLE_NAME, habitDays.toMap());
@@ -181,7 +192,7 @@ class MainScopedModel extends Model {
 
   void _deleteFutureHabits(HabitConfig habit) async {
     final Database db = await _database;
-    for (HabitDay hs in nextHabits()) {
+    for (HabitDay hs in nextHabits) {
       if (hs.habitId == habit.habitId) {
         db.delete(HabitDay.TABLE_NAME,
             where: "habit_id=? and day=?",

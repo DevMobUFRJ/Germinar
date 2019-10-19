@@ -1,7 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:germinar/habitSettings.dart';
 import 'package:germinar/my_flutter_app_icons.dart';
+import 'package:germinar/scoped_models/MainScopedModel.dart';
+import 'package:germinar/utils.dart';
+import 'package:scoped_model/scoped_model.dart';
+
+import 'models/habit_day_model.dart';
+import 'models/habit_model.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -17,72 +24,67 @@ class _HomeState extends State<Home> {
         children: <Widget>[
           Container(
             height: 48,
+            padding: EdgeInsets.only(left: 16, right: 16),
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                SizedBox(
-                  width: 16,
-                ),
-                Expanded(child: Text('Meta do dia')),
-                Text('Terça, 12/06'),
-                SizedBox(
-                  width: 16,
-                )
+                Expanded(child: const Text('Meta do dia')),
+                Text(Utils.dateStringForDay(DateTime.now())),
               ],
             ),
           ),
-          tileCustom(meta: 'Usar transporte público', action: true)
+          ScopedModelDescendant<MainScopedModel>(
+            builder: (context, child, mainModel) {
+              return Column(
+                children:
+                    List<Widget>.generate(mainModel.todaysHabits.length, (i) {
+                  return tileCustom(
+                      habit: mainModel
+                          .getHabitForId(mainModel.todaysHabits[i].habitId),
+                      habitDay: mainModel.todaysHabits[i],
+                      action: true);
+                }),
+              );
+            },
+          ),
         ],
       ),
     );
   }
 
-  Widget tileCustom({String data, String meta, bool action}) {
+  Widget tileCustom({@required Habit habit, HabitDay habitDay, bool action}) {
     return GestureDetector(
       child: Container(
         height: 60,
+        padding: EdgeInsets.only(left: 16, right: 16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            data != null
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(width: 16),
-                      Text(data),
-                    ],
-                  )
+            // Se action=true, então é do topo, não deve mostrar data
+            habitDay != null && !action
+                ? Text(Utils.dateStringForDay(habitDay.day))
                 : Container(),
             Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                SizedBox(
-                  width: 16,
-                ),
                 Expanded(
                   child: Text(
-                    meta,
+                    habit.title,
                     style: TextStyle(fontSize: 14),
                   ),
                 ),
-                Row(
-                  children: <Widget>[
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.black26,
-                    ),
-                    action
-                        ? Checkbox(
-                            value: true,
-                            activeColor: Color(0xffC5E2D0),
-                            onChanged: (_) {},
-                          )
-                        : Container()
-                  ],
+                Icon(
+                  Icons.arrow_forward_ios,
+                  color: Colors.black26,
                 ),
-                SizedBox(
-                  width: 16,
-                )
+                action
+                    ? Checkbox(
+                        value: true,
+                        activeColor: Color(0xffC5E2D0),
+                        onChanged: (_) {},
+                      )
+                    : Container(),
               ],
             ),
           ],
@@ -175,46 +177,20 @@ class _HomeState extends State<Home> {
 
   Widget cardList() {
     return Card(
-      child: Column(
-        children: <Widget>[
-          tabs(),
-          tileCustom(
-              data: 'Terça, 12/16',
-              meta: 'Usar transporte público',
-              action: false),
-          tileCustom(
-              data: 'Terça, 12/16',
-              meta: 'Usar transporte público',
-              action: false),
-          tileCustom(
-              data: 'Terça, 12/16',
-              meta: 'Usar transporte público',
-              action: false),
-          tileCustom(
-              data: 'Terça, 12/16',
-              meta: 'Usar transporte público',
-              action: false),
-          tileCustom(
-              data: 'Terça, 12/16',
-              meta: 'Usar transporte público',
-              action: false),
-          tileCustom(
-              data: 'Terça, 12/16',
-              meta: 'Usar transporte público',
-              action: false),
-          tileCustom(
-              data: 'Terça, 12/16',
-              meta: 'Usar transporte público',
-              action: false),
-          tileCustom(
-              data: 'Terça, 12/16',
-              meta: 'Usar transporte público',
-              action: false),
-          tileCustom(
-              data: 'Terça, 12/16',
-              meta: 'Usar transporte público',
-              action: false),
-        ],
+      child: ScopedModelDescendant<MainScopedModel>(
+        child: tabs(),
+        builder: (context, child, mainModel) {
+          return Column(
+            children: <Widget>[
+              child,
+            ]..addAll(mainModel.nextHabits
+                .map((h) => tileCustom(
+                    habitDay: h,
+                    habit: mainModel.getHabitForId(h.habitId),
+                    action: false))
+                .toList()),
+          );
+        },
       ),
     );
   }
