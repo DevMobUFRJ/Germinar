@@ -1,6 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:germinar/models/habit_day_model.dart';
+import 'package:germinar/scoped_models/main_scoped_model.dart';
+import 'package:germinar/utils.dart';
+import 'package:scoped_model/scoped_model.dart';
+
+import 'models/habit_model.dart';
 
 class HabitSettings extends StatefulWidget {
+  final Habit habit;
+  final HabitDay habitDay;
+
+  /// HabitDay é opcional. Se for passado, mostra a data no topo como meta,
+  /// se não, mostra apenas os dados do hábito mesmo.
+  HabitSettings({@required this.habit, this.habitDay});
+
   @override
   _HabitSettingsState createState() => _HabitSettingsState();
 }
@@ -61,34 +74,38 @@ class _HabitSettingsState extends State<HabitSettings> {
                     child: Container(
                       child: Column(
                         children: <Widget>[
+                          widget.habitDay == null
+                              ? Container()
+                              : SizedBox(height: 18),
+                          widget.habitDay == null
+                              ? Container()
+                              : Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text('Meta do dia'),
+                                    Text(Utils.dateStringForDay(
+                                        widget.habitDay.day)),
+                                  ],
+                                ),
                           SizedBox(height: 18),
                           Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              Text('Meta do dia'),
-                              Text('terça, 12/06'),
-                            ],
-                          ),
-                          SizedBox(height: 18),
-                          Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text('Usar transporte público'),
-                              Row(
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.keyboard_arrow_down,
-                                    color: Colors.black26,
-                                  ),
-                                  Checkbox(
-                                    value: true,
-                                    activeColor: Color(0xffC5E2D0),
-                                    onChanged: (_) {},
-                                  )
-                                ],
+                              Expanded(child: Text(widget.habit.title)),
+                              Icon(
+                                Icons.keyboard_arrow_down,
+                                color: Colors.black26,
                               ),
+                              widget.habitDay != null
+                                  ? Checkbox(
+                                      value: true,
+                                      activeColor: Color(0xffC5E2D0),
+                                      onChanged: (_) {},
+                                    )
+                                  : Container(),
                             ],
                           ),
                           SizedBox(height: 18),
@@ -96,7 +113,7 @@ class _HabitSettingsState extends State<HabitSettings> {
                             padding:
                                 const EdgeInsets.only(left: 16.0, right: 16.0),
                             child: Text(
-                              'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+                              widget.habit.description,
                               style: TextStyle(color: Colors.black54),
                             ),
                           ),
@@ -121,7 +138,26 @@ class _HabitSettingsState extends State<HabitSettings> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[Text('Deletar meta')],
+                                children: <Widget>[
+                                  ScopedModelDescendant<MainScopedModel>(
+                                    builder: (context, child, mainModel) {
+                                      return GestureDetector(
+                                        child: Text(mainModel
+                                                .userHasHabit(widget.habit.id)
+                                            ? "Deletar meta"
+                                            : "Adicionar ao cronograma"),
+                                        onTap: () {
+                                          if (mainModel
+                                              .userHasHabit(widget.habit.id)) {
+                                            //TODO abrir dialog de confirmação de remoção
+                                          } else {
+                                            //TODO Mandar pra tela de adicionar meta
+                                          }
+                                        },
+                                      );
+                                    },
+                                  )
+                                ],
                               ),
                             ),
                             onTap: () => Navigator.of(context).pop(),

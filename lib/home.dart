@@ -92,7 +92,10 @@ class _HomeState extends State<Home> {
       ),
       onTap: () {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HabitSettings()));
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    HabitSettings(habit: habit, habitDay: habitDay)));
       },
     );
   }
