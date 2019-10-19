@@ -200,6 +200,7 @@ class MainScopedModel extends Model {
     userHabitsConfig.add(habitDays);
     await setupFutureHabits();
     await updateUserHabits();
+    return true;
   }
 
   void deleteHabitConfig(HabitConfig habit) async {
