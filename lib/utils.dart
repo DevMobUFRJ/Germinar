@@ -1,4 +1,14 @@
 class Utils {
+  static String dateStringForDay(DateTime date) {
+    return weekdayAsString(date.weekday) +
+        ", " +
+        (date.day < 10 ? '0' : '') +
+        date.day.toString() +
+        '/' +
+        (date.month < 10 ? '0' : '') +
+        date.month.toString();
+  }
+
   static String weekdayAsString(int weekday) {
     switch (weekday) {
       case 1:
