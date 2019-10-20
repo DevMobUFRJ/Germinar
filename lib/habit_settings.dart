@@ -303,7 +303,7 @@ class _HabitSettingsState extends State<HabitSettings> {
                               ),
                               widget.habitDay != null
                                   ? Checkbox(
-                                      value: true,
+                                      value: widget.habitDay.done,
                                       activeColor: Color(0xffC5E2D0),
                                       onChanged: (_) {},
                                     )

@@ -104,11 +104,16 @@ class _HomeState extends State<Home> {
                   color: Colors.black26,
                 ),
                 action
-                    ? Checkbox(
-                        value: true,
-                        activeColor: Color(0xffC5E2D0),
-                        onChanged: (_) {},
-                      )
+                    ? ScopedModelDescendant<MainScopedModel>(
+                        builder: (context, _, mainModel) => Checkbox(
+                              value: habitDay.done,
+                              activeColor: Color(0xffC5E2D0),
+                              onChanged: (_) {
+                                habitDay.done = !habitDay.done;
+                                mainModel.updateHabitDayStatus(
+                                    habitDay, habitDay.done);
+                              },
+                            ))
                     : Container(),
               ],
             ),
