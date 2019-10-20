@@ -207,20 +207,20 @@ class MainScopedModel extends Model {
     return true;
   }
 
-  void deleteHabitConfig(HabitConfig habit) async {
+  Future<void> deleteHabitConfig(int habitId) async {
     final Database db = await _database;
     await db.delete(HabitConfig.TABLE_NAME,
-        where: "habit_id=?", whereArgs: [habit.habitId]);
-    updateUserHabitsConfig();
-    _deleteFutureHabits(habit);
+        where: "habit_id=?", whereArgs: [habitId]);
+    await updateUserHabitsConfig();
+    await _deleteFutureHabits(habitId);
     notifyListeners();
   }
 
-  void _deleteFutureHabits(HabitConfig habit) async {
+  Future<void> _deleteFutureHabits(int habitId) async {
     final Database db = await _database;
     for (HabitDay hs in nextHabits) {
-      if (hs.habitId == habit.habitId) {
-        db.delete(HabitDay.TABLE_NAME,
+      if (hs.habitId == habitId) {
+        await db.delete(HabitDay.TABLE_NAME,
             where: "habit_id=? and day=?",
             whereArgs: [hs.habitId, hs.day.toIso8601String()]);
       }

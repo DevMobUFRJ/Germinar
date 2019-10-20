@@ -19,16 +19,39 @@ class HabitSettings extends StatefulWidget {
 }
 
 class _HabitSettingsState extends State<HabitSettings> {
-//  _deleteConfirmation(){
-//    showDialog(
-//      context: context,
-//      builder: (BuildContext context){
-//        return AlertDialog(
-//
-//        )
-//      }
-//    );
-//  }
+  _deleteConfirmation() {
+    showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Remover meta"),
+            content:
+                Text("Tem certeza que deseja remover essa meta do cronograma?"),
+            actions: <Widget>[
+              GestureDetector(
+                child: Text("Voltar"),
+                onTap: () => Navigator.pop(context),
+              ),
+              ScopedModelDescendant<MainScopedModel>(
+                builder: (context, _, mainModel) {
+                  return GestureDetector(
+                    child: Container(
+                      child: Text("Remover"),
+                      padding: EdgeInsets.all(8),
+                    ),
+                    onTap: () {
+                      mainModel.deleteHabitConfig(widget.habit.id).then((_) {
+                        Navigator.pop(context);
+                      });
+                    },
+                  );
+                },
+              ),
+            ],
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +172,7 @@ class _HabitSettingsState extends State<HabitSettings> {
                                         onTap: () {
                                           if (mainModel
                                               .userHasHabit(widget.habit.id)) {
-                                            //TODO abrir dialog de confirmação de remoção
+                                            _deleteConfirmation();
                                           } else {
                                             //TODO Mandar pra tela de adicionar meta
                                           }

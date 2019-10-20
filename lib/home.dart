@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:germinar/habit_settings.dart';
-import 'package:germinar/main.dart';
 import 'package:germinar/my_flutter_app_icons.dart';
 import 'package:germinar/scoped_models/main_scoped_model.dart';
 import 'package:germinar/utils.dart';
@@ -45,16 +44,24 @@ class _HomeState extends State<Home> {
           ),
           ScopedModelDescendant<MainScopedModel>(
             builder: (context, child, mainModel) {
-              return Column(
-                children:
-                    List<Widget>.generate(mainModel.todaysHabits.length, (i) {
-                  return tileCustom(
-                      habit: mainModel
-                          .getHabitForId(mainModel.todaysHabits[i].habitId),
-                      habitDay: mainModel.todaysHabits[i],
-                      action: true);
-                }),
-              );
+              return mainModel.todaysHabits.length > 0
+                  ? Column(
+                      children: List<Widget>.generate(
+                          mainModel.todaysHabits.length, (i) {
+                        return tileCustom(
+                            habit: mainModel.getHabitForId(
+                                mainModel.todaysHabits[i].habitId),
+                            habitDay: mainModel.todaysHabits[i],
+                            action: true);
+                      }),
+                    )
+                  : Container(
+                      child: Text(
+                        "Sem metas pra hoje :) Visite a aba \"Metas\" e adicione uma!",
+                        textAlign: TextAlign.center,
+                      ),
+                      padding: EdgeInsets.all(16),
+                    );
             },
           ),
         ],

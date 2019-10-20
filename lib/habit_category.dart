@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:germinar/scoped_models/main_scoped_model.dart';
-import 'package:germinar/utils.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-import 'models/habit_day_model.dart';
 import 'models/habit_model.dart';
 
 class HabitCategory extends StatefulWidget {
@@ -34,64 +32,107 @@ class _HabitCategoryState extends State<HabitCategory> {
     });
   }
 
+  _deleteConfirmation() {
+    showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Remover meta"),
+            content:
+                Text("Tem certeza que deseja remover essa meta do cronograma?"),
+            actions: <Widget>[
+              GestureDetector(
+                child: Text("Voltar"),
+                onTap: () => Navigator.pop(context),
+              ),
+              ScopedModelDescendant<MainScopedModel>(
+                builder: (context, _, mainModel) {
+                  return GestureDetector(
+                    child: Container(
+                      child: Text("Remover"),
+                      padding: EdgeInsets.all(8),
+                    ),
+                    onTap: () {
+                      mainModel.deleteHabitConfig(actualHabit.id).then((_) {
+                        Navigator.pop(context);
+                      });
+                    },
+                  );
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   Widget descriptionHabit(Habit habit) {
     return Card(
-      child: ScopedModelDescendant<MainScopedModel>(
-        builder: (context, child, mainModel) {
-          return Container(
-            padding: EdgeInsets.only(top: 30, left: 24, right: 24, bottom: 30),
-            child: Column(
+      child: Container(
+        padding: EdgeInsets.only(top: 30, left: 24, right: 24, bottom: 30),
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      habit.title,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    )
-                  ],
-                ),
-                SizedBox(height: 16),
-                Container(
-                  padding: EdgeInsets.only(right: 8, left: 8),
-                  child: Text(
-                    habit.description,
-                    style: TextStyle(color: Colors.black54),
-                  ),
-                ),
-                SizedBox(height: 40),
-                GestureDetector(
-                  child: Card(
-                    elevation: 3,
-                    color: Color(0xffC5E2D0),
-                    child: Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          Expanded(
-                            child: Text(
-                              'Adicionar ao cronograma',
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.white,
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  onTap: () {},
+                Text(
+                  habit.title,
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 )
               ],
             ),
-          );
-        },
+            SizedBox(height: 16),
+            Container(
+              padding: EdgeInsets.only(right: 8, left: 8),
+              child: Text(
+                habit.description,
+                style: TextStyle(color: Colors.black54),
+              ),
+            ),
+            SizedBox(height: 40),
+            ScopedModelDescendant<MainScopedModel>(
+                builder: (context, child, mainModel) {
+              return GestureDetector(
+                child: Card(
+                  elevation: 3,
+                  color: mainModel.userHasHabit(habit.id)
+                      ? Color(0xffE29095)
+                      : Color(0xffA5D2B0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        Expanded(
+                          child: Text(
+                            mainModel.userHasHabit(habit.id)
+                                ? 'Remover do cronograma'
+                                : 'Adicionar ao cronograma',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.white,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                onTap: () {
+                  if (mainModel.userHasHabit(habit.id)) {
+                    _deleteConfirmation();
+                  } else {
+                    // TODO mandar pra tela de adicionar hábito
+                  }
+                },
+              );
+            }),
+          ],
+        ),
       ),
     );
   }
