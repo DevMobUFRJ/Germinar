@@ -1,4 +1,4 @@
-package ufrj.devmob.germinar.germinar
+package ufrj.devmob.germinar
 
 import android.os.Bundle
 
