@@ -36,7 +36,7 @@ class MainScopedModel extends Model {
         db.execute(
             "CREATE TABLE category(id INTEGER PRIMARY KEY, title TEXT);");
         db.execute(
-            "CREATE TABLE habit_days(habit_id INTEGER PRIMARY KEY, monday INTEGER, tuesday INTEGER, wednesday INTEGER, thursday INTEGER, friday INTEGER, saturday INTEGER, sunday INTEGER);");
+            "CREATE TABLE habit_config(habit_id INTEGER PRIMARY KEY, monday INTEGER, tuesday INTEGER, wednesday INTEGER, thursday INTEGER, friday INTEGER, saturday INTEGER, sunday INTEGER);");
         db.execute(
             "INSERT INTO category VALUES (1, 'Consumo'), (2, 'Água'), (3, 'Ar'), (4, 'Reciclagem');");
         db.execute(
@@ -63,8 +63,9 @@ class MainScopedModel extends Model {
             "INSERT INTO habit VALUES (11, 'Separar o lixo por categoria', 'Separando o lixo, você facilita o processo de reciclagem. Desse modo, você reduz o impacto ambiental, que implica na diminuição da retirada de matéria prima da natureza, gera economia de água, reduz o despejo inadequado de lixo e auxilia n arenda de quem vive disso!', 4);");
         db.execute(
             "INSERT INTO habit VALUES (12, 'Reutilizar materiais', 'Não é porque uma coisa quebrou que ela precisa ir para o lixo. Aprenda a reutilizar materiais para criar coisas novas.\n\nO mundo do DIR (Faça você mesmo) está cheio de tutoriais que utilizam materiais reciclados para construir algo novo e útil. Aventure-se por esse mundo e crie maravilhosas novidades!', 4);");
-        db.execute("INSERT INTO habit_days values (1, 0, 0, 0, 0, 1, 1, 0);");
-        db.execute("INSERT INTO habit_days values (11, 0, 1, 0, 0, 0, 0, 0);");
+        db.execute("INSERT INTO habit_config values (1, 0, 0, 0, 0, 1, 1, 0);");
+        db.execute(
+            "INSERT INTO habit_config values (11, 0, 1, 0, 0, 0, 0, 0);");
         db.execute(
             "INSERT INTO habit_status VALUES (1, '2019-10-11T00:00:00.000', 1);");
         db.execute(
@@ -107,7 +108,8 @@ class MainScopedModel extends Model {
     final List<Map<String, dynamic>> maps = await db.query(HabitDay.TABLE_NAME);
     userHabits = List.generate(maps.length, (i) {
       return HabitDay.fromMap(maps[i]);
-    });
+    })
+      ..sort((h1, h2) => h1.day.isBefore(h2.day) ? -1 : 1);
     notifyListeners();
   }
 
@@ -197,7 +199,8 @@ class MainScopedModel extends Model {
   }
 
   Future<bool> addHabitConfig(HabitConfig habitDays) async {
-    if (userHasHabit(habitDays.habitId)) return false;
+    if (userHasHabit(habitDays.habitId) || !habitDays.hasAnySelecion())
+      return false;
 
     final Database db = await _database;
     await db.insert(HabitConfig.TABLE_NAME, habitDays.toMap());

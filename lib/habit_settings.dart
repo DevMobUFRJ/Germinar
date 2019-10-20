@@ -1,9 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:germinar/models/habit_day_model.dart';
 import 'package:germinar/scoped_models/main_scoped_model.dart';
 import 'package:germinar/utils.dart';
 import 'package:scoped_model/scoped_model.dart';
 
+import 'models/habit_config_model.dart';
 import 'models/habit_model.dart';
 
 class HabitSettings extends StatefulWidget {
@@ -26,8 +29,8 @@ class _HabitSettingsState extends State<HabitSettings> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text("Remover meta"),
-            content:
-                Text("Tem certeza que deseja remover essa meta do cronograma?"),
+            content: Text(
+                "Tem certeza que deseja remover essa meta do cronograma?\n\nIsso também removerá todas as repetições futuras dessa meta, mas você pode adicioná-la novamente a qualquer momento."),
             actions: <Widget>[
               GestureDetector(
                 child: Text("Voltar"),
@@ -42,6 +45,182 @@ class _HabitSettingsState extends State<HabitSettings> {
                     ),
                     onTap: () {
                       mainModel.deleteHabitConfig(widget.habit.id).then((_) {
+                        Navigator.pop(context);
+                      });
+                    },
+                  );
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  _addHabitDialog() {
+    HabitConfig hConfig = HabitConfig(
+        widget.habit.id, false, false, false, false, false, false, false);
+    showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Adicionar meta"),
+            content: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text("Marque abaixo os dias da semana da sua meta:"),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        GestureDetector(
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: hConfig.monday
+                                    ? Color(0xffA5D2B0)
+                                    : Colors.transparent),
+                            padding: EdgeInsets.all(12),
+                            child: Text(
+                              "S",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w800, fontSize: 20),
+                            ),
+                          ),
+                          onTap: () =>
+                              setState(() => hConfig.monday = !hConfig.monday),
+                        ),
+                        GestureDetector(
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: hConfig.tuesday
+                                    ? Color(0xffA5D2B0)
+                                    : Colors.transparent),
+                            padding: EdgeInsets.all(12),
+                            child: Text(
+                              "T",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w800, fontSize: 20),
+                            ),
+                          ),
+                          onTap: () => setState(
+                              () => hConfig.tuesday = !hConfig.tuesday),
+                        ),
+                        GestureDetector(
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: hConfig.wednesday
+                                    ? Color(0xffA5D2B0)
+                                    : Colors.transparent),
+                            padding: EdgeInsets.all(12),
+                            child: Text(
+                              "Q",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w800, fontSize: 20),
+                            ),
+                          ),
+                          onTap: () => setState(
+                              () => hConfig.wednesday = !hConfig.wednesday),
+                        ),
+                        GestureDetector(
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: hConfig.thursday
+                                    ? Color(0xffA5D2B0)
+                                    : Colors.transparent),
+                            padding: EdgeInsets.all(12),
+                            child: Text(
+                              "Q",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w800, fontSize: 20),
+                            ),
+                          ),
+                          onTap: () => setState(
+                              () => hConfig.thursday = !hConfig.thursday),
+                        ),
+                        GestureDetector(
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: hConfig.friday
+                                    ? Color(0xffA5D2B0)
+                                    : Colors.transparent),
+                            padding: EdgeInsets.all(12),
+                            child: Text(
+                              "S",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w800, fontSize: 20),
+                            ),
+                          ),
+                          onTap: () =>
+                              setState(() => hConfig.friday = !hConfig.friday),
+                        ),
+                        GestureDetector(
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: hConfig.saturday
+                                    ? Color(0xffA5D2B0)
+                                    : Colors.transparent),
+                            padding: EdgeInsets.all(12),
+                            child: Text(
+                              "S",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w800, fontSize: 20),
+                            ),
+                          ),
+                          onTap: () => setState(
+                              () => hConfig.saturday = !hConfig.saturday),
+                        ),
+                        GestureDetector(
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: hConfig.sunday
+                                    ? Color(0xffA5D2B0)
+                                    : Colors.transparent),
+                            padding: EdgeInsets.all(12),
+                            child: Text(
+                              "D",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w800, fontSize: 20),
+                            ),
+                          ),
+                          onTap: () =>
+                              setState(() => hConfig.sunday = !hConfig.sunday),
+                        ),
+                      ],
+                    )
+                  ],
+                );
+              },
+            ),
+            actions: <Widget>[
+              GestureDetector(
+                child: Text("Cancelar"),
+                onTap: () => Navigator.pop(context),
+              ),
+              ScopedModelDescendant<MainScopedModel>(
+                builder: (context, _, mainModel) {
+                  return GestureDetector(
+                    child: Container(
+                      child: Text("Salvar"),
+                      padding: EdgeInsets.all(8),
+                    ),
+                    onTap: () {
+                      mainModel.addHabitConfig(hConfig).then((_) {
                         Navigator.pop(context);
                       });
                     },
@@ -174,7 +353,7 @@ class _HabitSettingsState extends State<HabitSettings> {
                                               .userHasHabit(widget.habit.id)) {
                                             _deleteConfirmation();
                                           } else {
-                                            //TODO Mandar pra tela de adicionar meta
+                                            _addHabitDialog();
                                           }
                                         },
                                       );

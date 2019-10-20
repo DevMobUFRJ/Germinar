@@ -1,6 +1,6 @@
 /// Dias escolhidos pelo usuário para que determinado hábito seja executado
 class HabitConfig {
-  static const String TABLE_NAME = "habit_days";
+  static const String TABLE_NAME = "habit_config";
 
   /// Mesmo ID do hábito a que ele se refere
   int habitId;
@@ -50,6 +50,16 @@ class HabitConfig {
       default:
         return false;
     }
+  }
+
+  bool hasAnySelecion() {
+    return monday ||
+        tuesday ||
+        wednesday ||
+        thursday ||
+        friday ||
+        saturday ||
+        sunday;
   }
 
   @override
