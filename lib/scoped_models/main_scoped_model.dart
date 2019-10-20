@@ -173,15 +173,16 @@ class MainScopedModel extends Model {
 
   List<HabitDay> get nextHabits {
     return userHabits
-        .where((h) => h.day.isAfter(DateTime(
-                DateTime.now().year, DateTime.now().month, DateTime.now().day)
-            .subtract(Duration(seconds: 1))))
+        .where((h) => h.day.isAfter(DateTime.now()))
         .toList(); // 23:59:59 do dia anterior
   }
 
   List<HabitDay> get previousHabits {
-    return userHabits.where((h) => h.day.isBefore(DateTime.now())).toList()
-      ..sort((h1, h2) => h1.day.isBefore(h2.day) ? 1 : -1);
+    return userHabits
+        .where(
+            (h) => h.day.isBefore(DateTime.now().subtract(Duration(days: 1))))
+        .toList()
+          ..sort((h1, h2) => h1.day.isBefore(h2.day) ? 1 : -1);
   }
 
   bool userHasHabit(int habitId) {
