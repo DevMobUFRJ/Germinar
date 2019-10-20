@@ -179,8 +179,9 @@ class MainScopedModel extends Model {
         .toList(); // 23:59:59 do dia anterior
   }
 
-  List<HabitDay> previousHabits() {
-    return userHabits.where((h) => h.day.isBefore(DateTime.now())).toList();
+  List<HabitDay> get previousHabits {
+    return userHabits.where((h) => h.day.isBefore(DateTime.now())).toList()
+      ..sort((h1, h2) => h1.day.isBefore(h2.day) ? 1 : -1);
   }
 
   bool userHasHabit(int habitId) {

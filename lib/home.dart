@@ -91,6 +91,14 @@ class _HomeState extends State<Home> {
                     style: TextStyle(fontSize: 14),
                   ),
                 ),
+                habitDay != null &&
+                        habitDay.day.isBefore(
+                            DateTime.now().subtract(Duration(days: 1)))
+                    ? Icon(
+                        habitDay.done ? Icons.done : Icons.close,
+                        color: habitDay.done ? Colors.green : Colors.orange,
+                      )
+                    : Container(),
                 Icon(
                   Icons.arrow_forward_ios,
                   color: Colors.black26,
@@ -147,7 +155,7 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Text('SEMANAL'),
+                    Text('PRÓXIMAS'),
                   ],
                 ),
               ),
@@ -177,7 +185,7 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Text('MENSAL'),
+                    Text('HISTÓRICO'),
                   ],
                 ),
               ),
@@ -201,10 +209,12 @@ class _HomeState extends State<Home> {
       child: ScopedModelDescendant<MainScopedModel>(
         child: tabs(),
         builder: (context, child, mainModel) {
+          List<HabitDay> habitsList =
+              tabState ? mainModel.nextHabits : mainModel.previousHabits;
           return Column(
             children: <Widget>[
               child,
-            ]..addAll(mainModel.nextHabits
+            ]..addAll(habitsList
                 .map((h) => tileCustom(
                     habitDay: h,
                     habit: mainModel.getHabitForId(h.habitId),
