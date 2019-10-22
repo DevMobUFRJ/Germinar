@@ -297,10 +297,6 @@ class _HabitSettingsState extends State<HabitSettings> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               Expanded(child: Text(widget.habit.title)),
-                              Icon(
-                                Icons.keyboard_arrow_down,
-                                color: Colors.black26,
-                              ),
                               widget.habitDay != null
                                   ? ScopedModelDescendant<MainScopedModel>(
                                       builder: (context, _, mainModel) =>

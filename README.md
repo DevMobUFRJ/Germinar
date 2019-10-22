@@ -10,3 +10,7 @@ O Projeto foi idealizado e teve seu design feito por Letícia Ribeiro (integrant
 
 O app foi desenvolvido por George Rappel e Patrick Sasso para apresentação durante a SNCT - 
 Semana Nacional de Ciência e Tecnologia, com autorização das autoras.
+
+## Instruções de release
+- Baixar os arquivos key.jks e key.properties do Drive do projeto e colocar na pasta `android`
+- Executar: `flutter build appbundle`
