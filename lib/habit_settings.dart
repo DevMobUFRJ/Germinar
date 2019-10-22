@@ -302,11 +302,19 @@ class _HabitSettingsState extends State<HabitSettings> {
                                 color: Colors.black26,
                               ),
                               widget.habitDay != null
-                                  ? Checkbox(
-                                      value: widget.habitDay.done,
-                                      activeColor: Color(0xffC5E2D0),
-                                      onChanged: (_) {},
-                                    )
+                                  ? ScopedModelDescendant<MainScopedModel>(
+                                      builder: (context, _, mainModel) =>
+                                          Checkbox(
+                                            value: widget.habitDay.done,
+                                            activeColor: Color(0xffC5E2D0),
+                                            onChanged: (_) {
+                                              widget.habitDay.done =
+                                                  !widget.habitDay.done;
+                                              mainModel.updateHabitDayStatus(
+                                                  widget.habitDay,
+                                                  widget.habitDay.done);
+                                            },
+                                          ))
                                   : Container(),
                             ],
                           ),
@@ -320,20 +328,20 @@ class _HabitSettingsState extends State<HabitSettings> {
                             ),
                           ),
                           SizedBox(height: 36),
-                          GestureDetector(
-                            child: Container(
-                              height: 46,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[Text('Compartilhar meta')],
-                              ),
-                            ),
-                            onTap: () {
-                              //TODO: implentar função de compartilhar
-                            },
-                          ),
-                          Divider(),
+//                          GestureDetector(
+//                            child: Container(
+//                              height: 46,
+//                              child: Row(
+//                                mainAxisSize: MainAxisSize.max,
+//                                mainAxisAlignment: MainAxisAlignment.center,
+//                                children: <Widget>[Text('Compartilhar meta')],
+//                              ),
+//                            ),
+//                            onTap: () {
+//                              //TODO: implentar função de compartilhar
+//                            },
+//                          ),
+//                          Divider(),
                           GestureDetector(
                             child: Container(
                               height: 46,
